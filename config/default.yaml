@@ -1,0 +1,10 @@
+twitterRss:
+  twitterApi:
+    consumer:
+      key: null
+      secret: null
+    access:
+      key: null
+      secret: null
+  follow:
+    - twitterapi

@@ -6,5 +6,7 @@ twitterRss:
     access:
       key: null
       secret: null
+  port: 3000
+  tweetsLimit: 100
   follow:
     - twitterapi

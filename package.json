@@ -19,6 +19,7 @@
     "twitter-api": "~1.0.2",
     "async": "~0.2.9",
     "config": "~0.4.27",
-    "js-yaml": "~2.1.0"
+    "js-yaml": "~2.1.0",
+    "express": "3.x"
   }
 }

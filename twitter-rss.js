@@ -83,17 +83,14 @@ async.map(config.follow, function (screen_name, cb) {
       cb(error ? status : null);
     });
   }, function (cb) { // create rss feed
-    var now = new Date();
     user.feed = new RSS({
       title: user.infos.name + ' (@' + user.infos.screen_name + ') Twitter Timeline',
       description: user.infos.description,
-      feed_url: 'http://example.com/rss.xml', //TODO better
+      feed_url: config.baseUrl + '/statuses/user_timeline/' + user.infos.screen_name + '.rss',
       site_url: 'http://twitter.com/' + user.infos.name,
       image_url: user.infos.profile_image_url,
       author: user.infos.name + ' (@' + user.infos.screen_name + ')',
-      language: user.infos.lang,
-      pubDate: now.toString(), //TODO better
-      ttl: '60' //TODO better
+      language: user.infos.lang
     });
     user.feed.item = RSS_item; // patch RSS
     cb();
@@ -136,8 +133,11 @@ app.get('/statuses/user_timeline/:screen_name.rss', function(req, res){
   }
 
   if (! user.xmlFeed) {
+    var now = new Date();
+    user.feed.pubDate = now.toString();
     user.xmlFeed = user.feed.xml(true);
   }
 
+  res.setHeader('Content-Type', 'application/rss+xml');
   res.send(user.xmlFeed);
 });

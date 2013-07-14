@@ -7,6 +7,7 @@ twitterRss:
       key: null
       secret: null
   port: 3000
+  baseUrl: 'http://localhost:3000'
   tweetsLimit: 20
   follow:
     - twitterapi

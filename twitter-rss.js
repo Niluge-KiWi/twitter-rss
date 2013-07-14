@@ -61,7 +61,6 @@ var addTweet = function (tweet, prepend) {
     title: user.infos.screen_name + ': ' + tweet.text,
     description: user.infos.screen_name + ': ' + (tweet.description || tweet.text),
     url: 'https://twitter.com/' + user.infos.screen_name + '/status/' + tweet.id_str,
-    guid: 'https://twitter.com/' + user.infos.screen_name + '/status/' + tweet.id_str,
     date: tweet.created_at
   }, prepend);
 

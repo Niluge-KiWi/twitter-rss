@@ -49,8 +49,8 @@ var addTweet = function (tweet, prepend) {
   // update rss
   user.feed.item({
     title: user.infos.screen_name + ': ' + tweet.text,
-    url: 'https://twitter.com/' + user.infos.screen_name + '/status/' + tweet.id,
-    guid: 'https://twitter.com/' + user.infos.screen_name + '/status/' + tweet.id,
+    url: 'https://twitter.com/' + user.infos.screen_name + '/status/' + tweet.id_str,
+    guid: 'https://twitter.com/' + user.infos.screen_name + '/status/' + tweet.id_str,
     date: tweet.created_at
   }, prepend);
 
@@ -64,7 +64,7 @@ var addTweet = function (tweet, prepend) {
 
   //TODO remove
   console.log('tweet', prepend, tweet.created_at, tweet.user.screen_name, tweet.text);
-  //console.log('tweet', tweet);
+  console.log('tweet_full', tweet);
   if (tweet.text && tweet.user) {
     console.log( user.infos.screen_name+': "'+tweet.text+'"');
   }

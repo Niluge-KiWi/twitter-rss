@@ -43,6 +43,11 @@ var users = {}; // indexed by screen_name
 var addTweet = function (tweet, prepend) {
   if (prepend === undefined) prepend = true;
 
+  if (! tweet.user) {
+    console.log('Invalid tweet, missing user', tweet);
+    return;
+  }
+
   var user = users[tweet.user.screen_name];
   if (! user)
     return;
@@ -134,6 +139,11 @@ async.map(config.follow, function (screen_name, cb) {
   // and get new tweets in stream
   client.stream( 'statuses/filter', { follow: users_id.join(',') }, function( json ) {
     var tweet = JSON.parse( json );
+    if (tweet.disconnect) {
+      console.log('stream disconnected', tweet);
+      // auto reconnect: use forever!
+      app.close();
+    }
     addTweet(tweet);
   });
 });

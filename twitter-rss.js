@@ -50,11 +50,10 @@ var addTweet = function (tweet, prepend) {
   if (tweet.retweeted_status) {
     // full text on RT
     tweet.text = 'RT @' + tweet.retweeted_status.user.screen_name + ': ' + tweet.retweeted_status.text;
-
-    // clickable urls
-    var urlPattern = /(\b(https?):\/\/[-A-Z0-9+&@#\/%?=~_|!:,.;]*[-A-Z0-9+&@#\/%=~_|])/gim;
-    tweet.description = tweet.text.replace(urlPattern, '<a href="$1" target="_blank">$1</a>');
   }
+  // clickable urls
+  var urlPattern = /(\b(https?):\/\/[-A-Z0-9+&@#\/%?=~_|!:,.;]*[-A-Z0-9+&@#\/%=~_|])/gim;
+  tweet.description = tweet.text.replace(urlPattern, '<a href="$1" target="_blank">$1</a>');
 
   // update rss
   user.feed.item({

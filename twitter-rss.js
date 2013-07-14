@@ -9,7 +9,7 @@ var app = express();
 var RSS = require('rss');
 
 // patch RSS
-RSS.item = item = function (options, prepend) {
+RSS.item = function (options, prepend) {
   options = options || {};
   var item = {
     title:          options.title || 'No title',
@@ -39,23 +39,22 @@ client.setAuth(
 
 var users = {}; // indexed by screen_name
 
-var addTweet = function (tweet) {
-  var user = users[tweet.user.screen_name]
+var addTweet = function (tweet, prepend) {
+  if (prepend === undefined) prepend = true;
+
+  var user = users[tweet.user.screen_name];
   if (! user)
     return;
-  
+
   // update rss
   user.feed.item({
     title: user.infos.screen_name + ': ' + tweet.text,
     url: 'https://twitter.com/' + user.infos.screen_name + '/status/' + tweet.id,
     guid: 'https://twitter.com/' + user.infos.screen_name + '/status/' + tweet.id,
     date: tweet.created_at
-  }, true);
+  }, prepend);
 
   // limit tweets
-  if (user.tweets.length > config.tweetsLimit) { //TODO limit by time
-    user.tweets.splice(0, user.tweets.length - config.tweetsLimit);
-  }
   if (user.feed.items.length > config.tweetsLimit) { //TODO limit by time
     user.feed.items.splice(config.tweetsLimit, user.feed.items.length - config.tweetsLimit);
   }
@@ -64,7 +63,8 @@ var addTweet = function (tweet) {
   user.xmlFeed = null;
 
   //TODO remove
-  console.log('tweet', tweet);
+  console.log('tweet', prepend, tweet.created_at, tweet.user.screen_name, tweet.text);
+  //console.log('tweet', tweet);
   if (tweet.text && tweet.user) {
     console.log( user.infos.screen_name+': "'+tweet.text+'"');
   }
@@ -74,7 +74,6 @@ console.log('Bootstrapping...');
 async.map(config.follow, function (screen_name, cb) {
   var user = users[screen_name] = {
     infos: {},
-    tweets: [],
     feed: {},
     feedXml: null
   };
@@ -99,10 +98,8 @@ async.map(config.follow, function (screen_name, cb) {
     cb();
   }, function (cb) { // get user last tweets
     client.get('statuses/user_timeline', { user_id: user.infos.id, count: config.tweetsLimit },function (tweets, error, status) {
-      // reverse add the tweets: we want to add the newest last
-      var i = tweets.length;
-      while(i--) {
-        addTweet(tweets[i]);
+      for (var i = 0; i < tweets.length; i++) {
+        addTweet(tweets[i], false);
       }
       cb(error ? status : null);
     });

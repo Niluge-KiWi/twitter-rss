@@ -9,7 +9,7 @@ var app = express();
 var RSS = require('rss');
 
 // patch RSS
-RSS.item = function (options, prepend) {
+RSS_item = function (options, prepend) {
   options = options || {};
   var item = {
     title:          options.title || 'No title',
@@ -95,6 +95,7 @@ async.map(config.follow, function (screen_name, cb) {
       pubDate: now.toString(), //TODO better
       ttl: '60' //TODO better
     });
+    user.feed.item = RSS_item; // patch RSS
     cb();
   }, function (cb) { // get user last tweets
     client.get('statuses/user_timeline', { user_id: user.infos.id, count: config.tweetsLimit },function (tweets, error, status) {
@@ -135,7 +136,7 @@ app.get('/statuses/user_timeline/:screen_name.rss', function(req, res){
   }
 
   if (! user.xmlFeed) {
-    user.xmlFeed = user.feed.xml();
+    user.xmlFeed = user.feed.xml(true);
   }
 
   res.send(user.xmlFeed);

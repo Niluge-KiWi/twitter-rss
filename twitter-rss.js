@@ -7,6 +7,8 @@ var express = require('express');
 var app = express();
 var auth = express.basicAuth(config.admin.username, config.admin.password);
 
+var OPML = require('./lib/opml.js');
+
 var RSS = require('rss');
 
 // patch RSS
@@ -172,4 +174,22 @@ app.get('/admin/list', auth, function(req, res){
     body += getUrl(screen_name) + '<br/>';
   });
   res.send(body);
+});
+
+app.get('/admin/opml', auth, function(req, res){
+  var opml = new OPML({ title: 'Twitter RSS feeds' });
+  var outline = opml.outline({ text: 'Twitter' });
+  config.follow.forEach(function (screen_name) {
+    var user = users[screen_name];
+    outline.outline({
+      text: user.feed.title,
+      title: user.feed.title,
+      type: 'rss',
+      htmlUrl: user.feed.site_url,
+      xmlUrl: user.feed.feed_url
+    });
+  });
+
+  res.type('xml');
+  res.send(opml.xml(true));
 });

@@ -5,6 +5,7 @@ var async = require('async');
 
 var express = require('express');
 var app = express();
+var auth = express.basicAuth(config.admin.username, config.admin.password);
 
 var RSS = require('rss');
 
@@ -79,6 +80,10 @@ var addTweet = function (tweet, prepend) {
   }
 };
 
+var getUrl = function(screen_name) {
+  return config.baseUrl + '/statuses/user_timeline/' + screen_name + '.rss';
+};
+
 console.log('Bootstrapping...');
 async.map(config.follow, function (screen_name, cb) {
   var user = users[screen_name] = {
@@ -95,7 +100,7 @@ async.map(config.follow, function (screen_name, cb) {
     user.feed = new RSS({
       title: user.infos.name + ' (@' + user.infos.screen_name + ') Twitter Timeline',
       description: user.infos.description,
-      feed_url: config.baseUrl + '/statuses/user_timeline/' + user.infos.screen_name + '.rss',
+      feed_url: getUrl(user.infos.screen_name),
       site_url: 'http://twitter.com/' + user.infos.name,
       image_url: user.infos.profile_image_url,
       author: user.infos.name + ' (@' + user.infos.screen_name + ')',
@@ -149,4 +154,12 @@ app.get('/statuses/user_timeline/:screen_name.rss', function(req, res){
 
   res.setHeader('Content-Type', 'application/rss+xml');
   res.send(user.xmlFeed);
+});
+
+app.get('/admin/list', auth, function(req, res){
+  var body = '';
+  config.follow.forEach(function (screen_name) {
+    body += getUrl(screen_name) + '<br/>';
+  });
+  res.send(body);
 });

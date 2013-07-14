@@ -8,6 +8,9 @@ twitterRss:
       secret: null
   port: 3000
   baseUrl: 'http://localhost:3000'
+  admin:
+    username: 'admin'
+    password: 'password'
   tweetsLimit: 20
   follow:
     - twitterapi

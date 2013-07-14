@@ -1,20 +1,23 @@
 {
   "name": "twitter-rss",
-  "version": "0.0.1",
+  "version": "0.1.0",
   "license": "MIT",
   "author": {
     "name": "Thomas Riccardi",
-    "url": "http://www.niluge-kiwi.info"
+    "url": "https://github.com/Niluge-KiWi/twitter-rss"
   },
-  "description": "Twitter RSS using API 1.1 REST and streaming",
+  "description": "Twitter RSS using v1.1 REST and Stream API",
   "keywords": [
     "rss",
     "twitter",
     "tweet",
+    "stream",
     "streaming",
     "rest"
   ],
-  "main": "twitter-rss.js",
+  "scripts": {
+    "start": "node twitter-rss.js"
+  },
   "dependencies": {
     "twitter-api": "~1.0.2",
     "async": "~0.2.9",

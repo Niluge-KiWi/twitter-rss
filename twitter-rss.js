@@ -108,7 +108,7 @@ async.map(config.follow, function (screen_name, cb) {
       title: user.infos.name + ' (@' + user.infos.screen_name + ') Twitter Timeline',
       description: user.infos.description,
       feed_url: getUrl(user.infos.screen_name),
-      site_url: 'http://twitter.com/' + user.infos.name,
+      site_url: 'http://twitter.com/' + user.infos.screen_name,
       image_url: user.infos.profile_image_url,
       author: user.infos.name + ' (@' + user.infos.screen_name + ')',
       language: user.infos.lang

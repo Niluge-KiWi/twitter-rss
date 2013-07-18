@@ -135,7 +135,7 @@ async.map(config.follow, function (screen_name, cb) {
   console.log('users', users);
 
   // ready to start listening
-  app.listen(config.port);
+  var server = app.listen(config.port);
   console.log('Listening on port', config.port);
 
   // and get new tweets in stream
@@ -144,7 +144,8 @@ async.map(config.follow, function (screen_name, cb) {
     if (tweet.disconnect) {
       console.log('stream disconnected', tweet);
       // auto reconnect: use forever!
-      app.close();
+      server.close();
+      return;
     }
     addTweet(tweet);
   });

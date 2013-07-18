@@ -101,7 +101,7 @@ async.map(config.follow, function (screen_name, cb) {
   async.series([ function (cb) { // get user infos (for user_id)
     client.get('users/show', { screen_name: screen_name }, function (userInfos, error, status) {
       user.infos = userInfos;
-      cb(error ? status : null);
+      cb(error);
     });
   }, function (cb) { // create rss feed
     user.feed = new RSS({
@@ -123,7 +123,7 @@ async.map(config.follow, function (screen_name, cb) {
       cb(error ? status : null);
     });
   }], function (err) {
-    cb(err, user.infos.id);
+    cb(err, err ? null : user.infos.id);
   });
 }, function(err, users_id) {
   if (err) {

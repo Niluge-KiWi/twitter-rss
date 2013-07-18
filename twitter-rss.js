@@ -139,11 +139,16 @@ async.map(config.follow, function (screen_name, cb) {
   console.log('Listening on port', config.port);
 
   // and get new tweets in stream
-  client.stream( 'statuses/filter', { follow: users_id.join(',') }, function( json ) {
+  client.stream( 'statuses/filter', { follow: users_id.join(',') }, function(json, err) {
+    if (err) {
+      console.log('stream error', err);
+      // auto reconnect: use forever!
+      server.close();
+      return;
+    }
     var tweet = JSON.parse( json );
     if (tweet.disconnect) {
       console.log('stream disconnected', tweet);
-      // auto reconnect: use forever!
       server.close();
       return;
     }

@@ -9,6 +9,6 @@ Twitter RSS is a nodejs HTTP server that reimplements and improves the late RSS 
 2. Edit config/default.yaml or create a new environment and add your Twitter API keys and tokens
 3. node twitter-rss.js
 
-## License
+## Licenses
 
-MIT License.
+WTFPL 2.0, CC0, MIT.

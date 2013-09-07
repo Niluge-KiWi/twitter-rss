@@ -1,7 +1,11 @@
 {
   "name": "twitter-rss",
   "version": "0.1.0",
-  "license": "MIT",
+  "licenses": [
+    { "type": "WTFPL 2.0", "url": "http://www.wtfpl.net/txt/copying/" },
+    { "type": "CC0", "url": "http://creativecommons.org/publicdomain/zero/1.0/" },
+    { "type": "MIT", "url": "http://opensource.org/licenses/MIT" }
+  ],
   "author": {
     "name": "Thomas Riccardi",
     "url": "https://github.com/Niluge-KiWi/twitter-rss"

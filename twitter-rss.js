@@ -1,4 +1,5 @@
 var config = require('config').twitterRss;
+var util = require('util');
 
 var client = require('twitter-api').createClient();
 var async = require('async');
@@ -46,7 +47,7 @@ var addTweet = function (tweet, prepend) {
   if (prepend === undefined) prepend = true;
 
   if (! tweet.user) {
-    console.log('Invalid tweet, missing user', tweet);
+    console.error('Invalid tweet, missing user', util.inspect(tweet, {depth: 100}));
     return;
   }
 
@@ -81,7 +82,7 @@ var addTweet = function (tweet, prepend) {
 
   //TODO remove
   console.log('tweet', prepend, tweet.created_at, tweet.user.screen_name, tweet.text);
-  console.log('tweet_full', tweet);
+  console.log('tweet_full', util.inspect(tweet, {depth: 100}));
   if (tweet.text && tweet.user) {
     console.log( user.infos.screen_name+': "'+tweet.text+'"');
   }

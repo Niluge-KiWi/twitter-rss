@@ -3,7 +3,7 @@
   "version": "0.1.0",
   "licenses": [
     { "type": "WTFPL 2.0", "url": "http://www.wtfpl.net/txt/copying/" },
-    { "type": "CC0", "url": "http://creativecommons.org/publicdomain/zero/1.0/" },
+    { "type": "CC0 1.0", "url": "http://creativecommons.org/publicdomain/zero/1.0/" },
     { "type": "MIT", "url": "http://opensource.org/licenses/MIT" }
   ],
   "author": {

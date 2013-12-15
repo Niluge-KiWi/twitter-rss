@@ -5,9 +5,11 @@ Twitter RSS is a nodejs HTTP server that reimplements and improves the late RSS 
 
 ## Installation
 
-1. git clone https://github.com/Niluge-KiWi/twitter-rss.git
-2. Edit config/default.yaml or create a new environment and add your Twitter API keys and tokens
-3. node twitter-rss.js
+```bash
+git clone https://github.com/Niluge-KiWi/twitter-rss.git && cd twitter-rss
+# Edit config/default.yaml or create a new environment and add your Twitter API keys and tokens
+node twitter-rss.js
+```
 
 ## Licenses
 

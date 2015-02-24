@@ -80,12 +80,12 @@ var addTweet = function (tweet, prepend) {
   // invalidate xml cache
   user.xmlFeed = null;
 
-  //TODO remove
-  console.log('tweet', prepend, tweet.created_at, tweet.user.screen_name, tweet.text);
-  console.log('tweet_full', util.inspect(tweet, {depth: 100}));
-  if (tweet.text && tweet.user) {
-    console.log( user.infos.screen_name+': "'+tweet.text+'"');
-  }
+  //TODO configure
+  // console.log('tweet', prepend, tweet.created_at, tweet.user.screen_name, tweet.text);
+  // console.log('tweet_full', util.inspect(tweet, {depth: 100}));
+  // if (tweet.text && tweet.user) {
+  //   console.log( user.infos.screen_name+': "'+tweet.text+'"');
+  // }
 };
 
 var getUrl = function(screen_name) {
@@ -142,14 +142,14 @@ async.map(config.follow, function (screen_name, cb) {
   // and get new tweets in stream
   client.stream( 'statuses/filter', { follow: users_id.join(',') }, function(json, err) {
     if (err) {
-      console.log('stream error', err);
+      console.error('stream error', err);
       // auto reconnect: use forever!
       server.close();
       return;
     }
     var tweet = JSON.parse( json );
     if (tweet.disconnect) {
-      console.log('stream disconnected', tweet);
+      console.error('stream disconnected', tweet);
       server.close();
       return;
     }

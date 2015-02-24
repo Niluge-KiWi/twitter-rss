@@ -27,7 +27,7 @@ RSS_item = function (options, prepend) {
   };
 
   if (prepend)
-    this.items.unshift(item)
+    this.items.unshift(item);
   else
     this.items.push(item);
   return this;

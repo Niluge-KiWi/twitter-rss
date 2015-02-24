@@ -46,6 +46,11 @@ var users = {}; // indexed by screen_name
 var addTweet = function (tweet, prepend) {
   if (prepend === undefined) prepend = true;
 
+  if (tweet.delete) {
+    //console.log('Ignored special tweet: delete', util.inspect(tweet, {depth: 100}));
+    return;
+  }
+
   if (! tweet.user) {
     console.error('Invalid tweet, missing user', util.inspect(tweet, {depth: 100}));
     return;

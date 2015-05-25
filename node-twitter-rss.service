@@ -1,0 +1,10 @@
+[Service]
+ExecStart=/usr/bin/nodejs twitter-rss.js
+Restart=always
+User=www-data
+Group=www-data
+Environment=NODE_ENV=production
+WorkingDirectory=/path/to/twitter-rss
+
+[Install]
+WantedBy=multi-user.target

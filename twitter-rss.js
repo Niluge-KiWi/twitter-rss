@@ -72,9 +72,14 @@ var addTweet = function (tweet, prepend) {
     // full text on RT
     tweet.full_text = 'RT @' + tweet.retweeted_status.user.screen_name + ': ' + tweet.retweeted_status.full_text;
   }
+  tweet.description = tweet.full_text;
+  if (tweet.quoted_status) {
+    Tweet.convert2ExtendedTweet(tweet.quoted_status);
+    tweet.description += '<br/>Quote @' + tweet.quoted_status.user.screen_name + ': ' + tweet.quoted_status.full_text;
+  }
   // clickable urls
   var urlPattern = /(\b(https?):\/\/[-A-Z0-9+&@#\/%?=~_|!:,.;]*[-A-Z0-9+&@#\/%=~_|])/gim;
-  tweet.description = tweet.full_text.replace(urlPattern, '<a href="$1" target="_blank">$1</a>');
+  tweet.description = tweet.description.replace(urlPattern, '<a href="$1" target="_blank">$1</a>');
 
   // update rss
   user.feed.item({

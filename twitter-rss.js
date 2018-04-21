@@ -8,7 +8,8 @@ var express = require('express');
 var app = express();
 var auth = express.basicAuth(config.admin.username, config.admin.password);
 
-var OPML = require('./lib/opml.js');
+var OPML = require('./lib/opml');
+var Tweet = require('./lib/Tweet');
 
 var RSS = require('rss');
 
@@ -44,7 +45,12 @@ client.setAuth(
 var users = {}; // indexed by screen_name
 
 var addTweet = function (tweet, prepend) {
-  if (prepend === undefined) prepend = true;
+  //TODO configure
+  // console.log('tweet_full_original', util.inspect(tweet, {depth: 100}));
+
+  Tweet.convert2ExtendedTweet(tweet);
+
+  // console.log('tweet_full_extended', util.inspect(tweet, {depth: 100}));
 
   if (tweet.delete) {
     //console.log('Ignored special tweet: delete', util.inspect(tweet, {depth: 100}));
@@ -62,17 +68,18 @@ var addTweet = function (tweet, prepend) {
 
   // improve feed content
   if (tweet.retweeted_status) {
+    Tweet.convert2ExtendedTweet(tweet.retweeted_status);
     // full text on RT
-    tweet.text = 'RT @' + tweet.retweeted_status.user.screen_name + ': ' + tweet.retweeted_status.text;
+    tweet.full_text = 'RT @' + tweet.retweeted_status.user.screen_name + ': ' + tweet.retweeted_status.full_text;
   }
   // clickable urls
   var urlPattern = /(\b(https?):\/\/[-A-Z0-9+&@#\/%?=~_|!:,.;]*[-A-Z0-9+&@#\/%=~_|])/gim;
-  tweet.description = tweet.text.replace(urlPattern, '<a href="$1" target="_blank">$1</a>');
+  tweet.description = tweet.full_text.replace(urlPattern, '<a href="$1" target="_blank">$1</a>');
 
   // update rss
   user.feed.item({
-    title: user.infos.screen_name + ': ' + tweet.text,
-    description: user.infos.screen_name + ': ' + (tweet.description || tweet.text),
+    title: user.infos.screen_name + ': ' + tweet.full_text,
+    description: user.infos.screen_name + ': ' + (tweet.description || tweet.full_text),
     url: 'https://twitter.com/' + user.infos.screen_name + '/status/' + tweet.id_str,
     date: tweet.created_at
   }, prepend);
@@ -86,10 +93,9 @@ var addTweet = function (tweet, prepend) {
   user.xmlFeed = null;
 
   //TODO configure
-  // console.log('tweet', prepend, tweet.created_at, tweet.user.screen_name, tweet.text);
-  // console.log('tweet_full', util.inspect(tweet, {depth: 100}));
-  // if (tweet.text && tweet.user) {
-  //   console.log( user.infos.screen_name+': "'+tweet.text+'"');
+  // console.log('tweet', prepend, tweet.created_at, tweet.user.screen_name, tweet.full_text);
+  // if (tweet.full_text && tweet.user) {
+  //   console.log( user.infos.screen_name+': "'+tweet.full_text+'"');
   // }
 };
 
@@ -122,7 +128,7 @@ async.map(config.follow, function (screen_name, cb) {
     user.feed.item = RSS_item; // patch RSS
     cb();
   }, function (cb) { // get user last tweets
-    client.get('statuses/user_timeline', { user_id: user.infos.id, count: config.tweetsLimit },function (tweets, error, status) {
+    client.get('statuses/user_timeline', { user_id: user.infos.id, count: config.tweetsLimit, tweet_mode: 'extended' },function (tweets, error, status) {
       for (var i = 0; i < tweets.length; i++) {
         addTweet(tweets[i], false);
       }
@@ -167,7 +173,7 @@ async.map(config.follow, function (screen_name, cb) {
       server.close();
       return;
     }
-    addTweet(tweet);
+    addTweet(tweet, true);
   });
 });
 

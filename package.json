@@ -2,9 +2,18 @@
   "name": "twitter-rss",
   "version": "0.1.0",
   "licenses": [
-    { "type": "WTFPL 2.0", "url": "http://www.wtfpl.net/txt/copying/" },
-    { "type": "CC0 1.0", "url": "http://creativecommons.org/publicdomain/zero/1.0/" },
-    { "type": "MIT", "url": "http://opensource.org/licenses/MIT" }
+    {
+      "type": "WTFPL 2.0",
+      "url": "http://www.wtfpl.net/txt/copying/"
+    },
+    {
+      "type": "CC0 1.0",
+      "url": "http://creativecommons.org/publicdomain/zero/1.0/"
+    },
+    {
+      "type": "MIT",
+      "url": "http://opensource.org/licenses/MIT"
+    }
   ],
   "author": {
     "name": "Thomas Riccardi",
@@ -20,7 +29,8 @@
     "rest"
   ],
   "scripts": {
-    "start": "node twitter-rss.js"
+    "start": "node twitter-rss.js",
+    "test": "jasmine"
   },
   "dependencies": {
     "twitter-api": "~1.0.2",
@@ -30,5 +40,8 @@
     "express": "3.x",
     "rss": "~0.2.0",
     "xml": "~0.0.7"
+  },
+  "devDependencies": {
+    "jasmine": "^3.1.0"
   }
 }

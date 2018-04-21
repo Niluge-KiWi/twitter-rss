@@ -81,6 +81,13 @@ var addTweet = function (tweet, prepend) {
   var urlPattern = /(\b(https?):\/\/[-A-Z0-9+&@#\/%?=~_|!:,.;]*[-A-Z0-9+&@#\/%=~_|])/gim;
   tweet.description = tweet.description.replace(urlPattern, '<a href="$1" target="_blank">$1</a>');
 
+  // media
+  if (tweet.extended_entities) {
+    tweet.extended_entities.media.forEach(function (media) {
+      tweet.description += '<br/><a href="' + media.url + '"><img src="' + media.media_url_https + '"/></a>';
+    });
+  }
+
   // update rss
   user.feed.item({
     title: user.infos.screen_name + ': ' + tweet.full_text,

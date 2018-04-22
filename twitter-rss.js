@@ -162,10 +162,8 @@ async.map(config.follow, function (screen_name, cb) {
   var server = app.listen(config.port);
   console.log('Listening on port', config.port);
 
-  var returnCode = 0;
   server.on('close', function() {
-    console.error('Server closed, exit with return code', returnCode);
-    process.exit(returnCode);
+    console.error('Server closed, exit with return code', process.exitCode);
   });
 
   // and get new tweets in stream
@@ -173,7 +171,7 @@ async.map(config.follow, function (screen_name, cb) {
     if (err) {
       console.error('stream error', err);
       // auto reconnect: use systemd!
-      returnCode = 1;
+      process.exitCode = 1;
       server.close();
       return;
     }
@@ -181,7 +179,7 @@ async.map(config.follow, function (screen_name, cb) {
     if (tweet.disconnect) {
       console.error('stream disconnected', tweet);
       // auto reconnect: use systemd!
-      returnCode = 2;
+      process.exitCode = 2;
       server.close();
       return;
     }

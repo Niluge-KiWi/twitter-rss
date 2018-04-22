@@ -44,12 +44,13 @@ client.setAuth(
 
 var users = {}; // indexed by screen_name
 
-var addTweet = function (tweet, prepend) {
+var addTweet = function (data, prepend) {
   //TODO configure
-  // console.log('tweet_full_original', util.inspect(tweet, {depth: 100}));
+  // console.log('tweet_full_original', util.inspect(data, {depth: 100}));
 
-  Tweet.convert2ExtendedTweet(tweet);
+  var tweet = new Tweet(data);
 
+  //TODO configure
   // console.log('tweet_full_extended', util.inspect(tweet, {depth: 100}));
 
   if (tweet.delete) {
@@ -66,35 +67,9 @@ var addTweet = function (tweet, prepend) {
   if (! user)
     return;
 
-  // improve feed content
-  if (tweet.retweeted_status) {
-    Tweet.convert2ExtendedTweet(tweet.retweeted_status);
-    // full text on RT
-    tweet.full_text = 'RT @' + tweet.retweeted_status.user.screen_name + ': ' + tweet.retweeted_status.full_text;
-  }
-  tweet.description = tweet.full_text;
-  if (tweet.quoted_status) {
-    Tweet.convert2ExtendedTweet(tweet.quoted_status);
-    tweet.description += '<br/>Quote @' + tweet.quoted_status.user.screen_name + ': ' + tweet.quoted_status.full_text;
-  }
-  // clickable urls
-  var urlPattern = /(\b(https?):\/\/[-A-Z0-9+&@#\/%?=~_|!:,.;]*[-A-Z0-9+&@#\/%=~_|])/gim;
-  tweet.description = tweet.description.replace(urlPattern, '<a href="$1" target="_blank">$1</a>');
-
-  // media
-  if (tweet.extended_entities) {
-    tweet.extended_entities.media.forEach(function (media) {
-      tweet.description += '<br/><a href="' + media.url + '"><img src="' + media.media_url_https + '"/></a>';
-    });
-  }
 
   // update rss
-  user.feed.item({
-    title: user.infos.screen_name + ': ' + tweet.full_text,
-    description: user.infos.screen_name + ': ' + (tweet.description || tweet.full_text),
-    url: 'https://twitter.com/' + user.infos.screen_name + '/status/' + tweet.id_str,
-    date: tweet.created_at
-  }, prepend);
+  user.feed.item(tweet.toFeedItem(), prepend);
 
   // limit tweets
   if (user.feed.items.length > config.tweetsLimit) { //TODO limit by time

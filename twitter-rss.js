@@ -151,7 +151,7 @@ async.map(config.follow, function (screen_name, cb) {
       return;
     }
     var tweet = JSON.parse( json );
-    if (tweet.disconnect) {
+    if (!tweet || tweet.disconnect) {
       console.error('stream disconnected', tweet);
       // auto reconnect: use systemd!
       process.exitCode = 2;

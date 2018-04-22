@@ -1,7 +1,7 @@
 var config = require('config').twitterRss;
 var util = require('util');
 
-var client = require('twitter-api').createClient();
+var Twitter = require('twitter-lite');
 var async = require('async');
 
 var express = require('express');
@@ -35,12 +35,13 @@ RSS_item = function (options, prepend) {
 };
 
 
-client.setAuth(
-  config.twitterApi.consumer.key,
-  config.twitterApi.consumer.secret,
-  config.twitterApi.access.key,
-  config.twitterApi.access.secret
-);
+const client = new Twitter({
+  subdomain: "api",
+  consumer_key: config.twitterApi.consumer.key,
+  consumer_secret: config.twitterApi.consumer.secret,
+  access_token_key: config.twitterApi.access.key,
+  access_token_secret: config.twitterApi.access.secret
+});
 
 var users = {}; // indexed by screen_name
 
@@ -98,10 +99,12 @@ async.map(config.follow, function (screen_name, cb) {
     feedXml: null
   };
   async.series([ function (cb) { // get user infos (for user_id)
-    client.get('users/show', { screen_name: screen_name }, function (userInfos, error, status) {
-      user.infos = userInfos;
-      cb(error);
-    });
+    client.get('users/show', { screen_name: screen_name })
+      .then(userInfos => {
+        user.infos = userInfos;
+        cb();
+      })
+      .catch(cb);
   }, function (cb) { // create rss feed
     user.feed = new RSS({
       title: user.infos.name + ' (@' + user.infos.screen_name + ') Twitter Timeline',
@@ -115,12 +118,14 @@ async.map(config.follow, function (screen_name, cb) {
     user.feed.item = RSS_item; // patch RSS
     cb();
   }, function (cb) { // get user last tweets
-    client.get('statuses/user_timeline', { user_id: user.infos.id, count: config.tweetsLimit, tweet_mode: 'extended' },function (tweets, error, status) {
-      for (var i = 0; i < tweets.length; i++) {
-        addTweet(tweets[i], false);
-      }
-      cb(error ? status : null);
-    });
+    client.get('statuses/user_timeline', { user_id: user.infos.id, count: config.tweetsLimit, tweet_mode: 'extended' })
+      .then(tweets => {
+        for (var i = 0; i < tweets.length; i++) {
+          addTweet(tweets[i], false);
+        }
+        cb();
+      })
+      .catch(cb);
   }], function (err) {
     cb(err, err ? null : user.infos.id);
   });
@@ -142,24 +147,29 @@ async.map(config.follow, function (screen_name, cb) {
   });
 
   // and get new tweets in stream
-  client.stream( 'statuses/filter', { follow: users_id.join(',') }, function(json, err) {
-    if (err) {
-      console.error('stream error', err);
+  client.stream( 'statuses/filter', { follow: users_id.join(',') })
+    .on("error", error => {
+      console.error('stream error', error);
       // auto reconnect: use systemd!
       process.exitCode = 1;
       server.close();
-      return;
-    }
-    var tweet = JSON.parse( json );
-    if (!tweet || tweet.disconnect) {
-      console.error('stream disconnected', tweet);
+    })
+    .on("end", response => {
+      console.error('stream end', response);
       // auto reconnect: use systemd!
       process.exitCode = 2;
       server.close();
-      return;
-    }
-    addTweet(tweet, true);
-  });
+    })
+    .on("data", tweet => {
+      if (!tweet || tweet.disconnect) {
+        console.error('stream disconnected', tweet);
+        // auto reconnect: use systemd!
+        process.exitCode = 3;
+        server.close();
+        return;
+      }
+      addTweet(tweet, true);
+    });
 });
 
 

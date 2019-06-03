@@ -38,7 +38,7 @@
     "express": "3.x",
     "js-yaml": "~2.1.0",
     "rss": "~0.2.0",
-    "twitter-lite": "^0.5.0",
+    "twitter-lite": "^0.9.4",
     "xml": "~0.0.7"
   },
   "devDependencies": {

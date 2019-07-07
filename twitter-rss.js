@@ -99,6 +99,7 @@ async.map(config.follow, function (screen_name, cb) {
     feedXml: null
   };
   async.series([ function (cb) { // get user infos
+    console.log('users/show', screen_name);
     client.get('users/show', { screen_name: screen_name })
       .then(userInfos => {
         user.infos = userInfos;
@@ -118,6 +119,7 @@ async.map(config.follow, function (screen_name, cb) {
     user.feed.item = RSS_item; // patch RSS
     cb();
   }, function (cb) { // get user last tweets
+    console.log('statuses/user_timeline', user.infos.screen_name);
     client.get('statuses/user_timeline', { screen_name: screen_name, count: config.tweetsLimit, tweet_mode: 'extended' })
       .then(tweets => {
         for (var i = 0; i < tweets.length; i++) {
@@ -127,12 +129,14 @@ async.map(config.follow, function (screen_name, cb) {
       })
       .catch(cb);
   }], function (err) {
+    console.log('finished bootstrapping user', screen_name, err);
     cb(err, err ? null : user.infos.id);
   });
 }, function(err, users_id) {
   if (err) {
     console.error('Error bootstrapping', err);
-    return;
+    // auto reconnect: use systemd!
+    process.exit(1);
   }
 
   console.log('users_id', users_id);

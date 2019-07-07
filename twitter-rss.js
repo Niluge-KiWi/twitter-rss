@@ -98,7 +98,7 @@ async.map(config.follow, function (screen_name, cb) {
     feed: {},
     feedXml: null
   };
-  async.series([ function (cb) { // get user infos (for user_id)
+  async.series([ function (cb) { // get user infos
     client.get('users/show', { screen_name: screen_name })
       .then(userInfos => {
         user.infos = userInfos;
@@ -118,7 +118,7 @@ async.map(config.follow, function (screen_name, cb) {
     user.feed.item = RSS_item; // patch RSS
     cb();
   }, function (cb) { // get user last tweets
-    client.get('statuses/user_timeline', { user_id: user.infos.id, count: config.tweetsLimit, tweet_mode: 'extended' })
+    client.get('statuses/user_timeline', { screen_name: screen_name, count: config.tweetsLimit, tweet_mode: 'extended' })
       .then(tweets => {
         for (var i = 0; i < tweets.length; i++) {
           addTweet(tweets[i], false);

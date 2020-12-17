@@ -1,6 +1,10 @@
 [Service]
 ExecStart=/usr/bin/nodejs twitter-rss.js
 Restart=always
+# restart every 1s min
+RestartSec=1s
+# always restart
+StartLimitInterval=0
 User=www-data
 Group=www-data
 Environment=NODE_ENV=production
